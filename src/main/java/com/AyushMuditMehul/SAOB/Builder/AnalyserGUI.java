@@ -8,6 +8,7 @@ package com.AyushMuditMehul.SAOB.Builder;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.*;
+import java.awt.Cursor;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
@@ -57,8 +58,15 @@ public class AnalyserGUI extends javax.swing.JPanel {
         jScrollPane1.setViewportView(textArea);
 
         prevButton.setText("Analyse Prev. Sentence");
+        prevButton.setEnabled(false);
+        prevButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevButtonActionPerformed(evt);
+            }
+        });
 
         nextButton.setText("Analyse Next Sentence");
+        nextButton.setEnabled(false);
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButtonActionPerformed(evt);
@@ -196,11 +204,13 @@ public class AnalyserGUI extends javax.swing.JPanel {
         // TODO add your handling code here:
         
         iterator++;
-        if(iterator<sentenceList.size())
+        if(iterator<sentenceList.size()&&iterator>=0)
         {
             Sentence sent=sentenceList.get(iterator);
             analysedSentence.setText(sent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
             Collection<RelationTriple> tripleList=sent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
             model.setRowCount(0);
             for(RelationTriple triple:tripleList)
@@ -208,29 +218,49 @@ public class AnalyserGUI extends javax.swing.JPanel {
                 Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
                 model.addRow(rowData);
             }
+        }        
+        
+        if(iterator==sentenceList.size()-1)
+        {
+            nextButton.setEnabled(false);
         }
+        if(iterator>0)
+        {
+            prevButton.setEnabled(true);
+        }
+        
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         // TODO add your handling code here:
-        textArea.setEditable(false);
-        stopButton.setEnabled(true);
-        startButton.setEnabled(false);
-        nextButton.setEnabled(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
         doc=new Document(textArea.getText());
         sentenceList= doc.sentences();
+        setCursor(Cursor.getDefaultCursor());
         if(sentenceList.size()!=0)
         {
+            textArea.setEditable(false);
+            stopButton.setEnabled(true);
+            startButton.setEnabled(false);
+            if(sentenceList.size()>1)
+             nextButton.setEnabled(true);
             iterator=0;
             Sentence sent=sentenceList.get(iterator);
             analysedSentence.setText(sent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));   
             Collection<RelationTriple> tripleList=sent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
             for(RelationTriple triple:tripleList)
             {
                 Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
                 model.addRow(rowData);
             }
+        }
+        else
+        {
+            doc=null;
+            sentenceList=null;
         }
         //start analysing
     }//GEN-LAST:event_startButtonActionPerformed
@@ -241,12 +271,41 @@ public class AnalyserGUI extends javax.swing.JPanel {
         startButton.setEnabled(true);
         stopButton.setEnabled(false);   
         nextButton.setEnabled(false);
+        prevButton.setEnabled(false);
         doc=null;
         sentenceList=null;
         iterator=-1;
         ((DefaultTableModel)tripleTable.getModel()).setRowCount(0);
         analysedSentence.setText("");        
     }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
+        // TODO add your handling code here:
+        iterator--;
+        if(iterator<sentenceList.size()&&iterator>=0)
+        {
+            Sentence sent=sentenceList.get(iterator);
+            analysedSentence.setText(sent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
+            Collection<RelationTriple> tripleList=sent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
+            DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
+            model.setRowCount(0);
+            for(RelationTriple triple:tripleList)
+            {
+                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
+                model.addRow(rowData);
+            }
+        }
+        if(iterator==0)
+        {
+            prevButton.setEnabled(false);
+        }
+        if(iterator!=sentenceList.size()-1)
+        {
+            nextButton.setEnabled(true);
+        }
+    }//GEN-LAST:event_prevButtonActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

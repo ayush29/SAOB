@@ -91,11 +91,16 @@
     <Component class="javax.swing.JButton" name="prevButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Analyse Prev. Sentence"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="nextButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Analyse Next Sentence"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextButtonActionPerformed"/>

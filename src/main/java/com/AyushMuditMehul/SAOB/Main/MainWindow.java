@@ -7,6 +7,7 @@ package com.AyushMuditMehul.SAOB.Main;
 
 import com.AyushMuditMehul.SAOB.Builder.AnalyserGUI;
 import java.awt.CardLayout;
+import static java.awt.Frame.MAXIMIZED_BOTH;
 
 
 /**
@@ -83,7 +84,9 @@ public class MainWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow().setVisible(true);
+                MainWindow m=new MainWindow();
+                        m.setVisible(true);
+                        m.setExtendedState(MAXIMIZED_BOTH);
             }
         });
     }
