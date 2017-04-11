@@ -22,8 +22,8 @@ import net.didion.jwnl.dictionary.Dictionary;
  */
 public class AnnotatorGUI extends javax.swing.JPanel {
 
-    private Synset w[][];
-    private int n;
+    private Synset synset[][];
+    private int numGloss;
     /**
      * Creates new form AnnotatorGUI
      */
@@ -42,20 +42,22 @@ public class AnnotatorGUI extends javax.swing.JPanel {
 
         Label1 = new javax.swing.JLabel();
         ComboBox = new javax.swing.JComboBox();
-        TextField = new javax.swing.JTextField();
+        property = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        Glosstable = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton2 = new javax.swing.JButton();
+        wordBox = new javax.swing.JTextArea();
+        word = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        glossDecription = new javax.swing.JTextArea();
 
         Label1.setText("Select a Property:");
 
         ComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        TextField.setToolTipText("");
+        property.setToolTipText("");
 
         jButton1.setText("Search");
         jButton1.setToolTipText("");
@@ -65,7 +67,7 @@ public class AnnotatorGUI extends javax.swing.JPanel {
             }
         });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        Glosstable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -73,98 +75,111 @@ public class AnnotatorGUI extends javax.swing.JPanel {
                 "Sense"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        Glosstable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GlosstableMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(Glosstable);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        wordBox.setColumns(20);
+        wordBox.setRows(5);
+        jScrollPane1.setViewportView(wordBox);
 
-        jButton2.setText("Words");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        word.setText("Words");
+        word.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                wordActionPerformed(evt);
             }
         });
 
         jButton3.setText("jButton3");
 
+        glossDecription.setColumns(20);
+        glossDecription.setRows(5);
+        jScrollPane3.setViewportView(glossDecription);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(96, 96, 96)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addGap(137, 137, 137))
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1041, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(word))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3))
+                .addGap(25, 25, 25))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(Label1)
                         .addGap(18, 18, 18)
                         .addComponent(ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(TextField, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45)
+                        .addComponent(property, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)
-                        .addContainerGap(171, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(25, 25, 25))))
+                        .addGap(358, 358, 358))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(400, 400, 400))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Label1)
+                    .addComponent(jButton1)
+                    .addComponent(property, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(65, 65, 65)
+                    .addComponent(Label1))
+                .addGap(43, 43, 43)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
-                .addGap(51, 51, 51)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(word))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            // initialize JWNL (this must be done before JWNL can be used)
+            // initialize JWNL (this must be done before JWNL can be used)           
             JWNL.initialize(new FileInputStream("properties.xml"));
             ArrayList<String> list = new ArrayList<String>();
-          IndexWordSet x = Dictionary.getInstance().lookupAllIndexWords(TextField.getText());
+          IndexWordSet x = Dictionary.getInstance().lookupAllIndexWords(property.getText());
             IndexWord s[];
             s = x.getIndexWordArray();
-            int n = x.size();
-            w = new Synset[n][];
-            for(int i=0;i<n;i++)
+            numGloss = x.size();
+            synset = new Synset[numGloss][];
+            for(int i=0;i<numGloss;i++)
             {
-                w[i]=s[i].getSenses();
-                for(int j=0;j<w[i].length;j++)
+                synset[i]=s[i].getSenses();
+                for(int j=0;j<synset[i].length;j++)
                 {
-                    //System.out.println(w[i][j].getOffset());
-                    list.add(w[i][j].getGloss());
+                    //System.out.println(synset[i][j].getOffset());
+                    list.add(synset[i][j].getGloss());
                     
                 }
             }
             if(list!=null)
             {
                 int k=0;
-                Iterator<String> c= list.iterator();
+                Iterator<String> c= list.iterator(  );
                 Object o[][]= new Object[list.size()][1];
                 while(c.hasNext())
                     o[k++][0]=c.next();
-                jTable2.setModel(new DefaultTableModel(o,new String[]{"SENSE"} ));
+                Glosstable.setModel(new DefaultTableModel(o,new String[]{"SENSE"} ));
             }
         }catch(Exception e)
         {
@@ -172,36 +187,45 @@ public class AnnotatorGUI extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      int x=jTable2.getSelectedRow(),j=0,i;
-      for(i=0;i<n;i++)
+    private void wordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wordActionPerformed
+      wordBox.setText("");
+        int x=Glosstable.getSelectedRow(),j=0,i;
+      for(i=0;i<numGloss;i++)
       {
-          for(j=0;j<w[i].length;j++)
+          for(j=0;j<synset[i].length;j++)
           {
               x--;
               if(x==0)
                   break;
           }
-          if(j==w[i].length)
+          if(j==synset[i].length)
               break;
       }
-        Word word[]= w[i][j].getWords();
-        int k = w[i][j].getWordsSize();
+        Word word[]= synset[i][j].getWords();
+        int k = synset[i][j].getWordsSize();
         for(int l=0;l<k;l++)
-        jTextArea1.append(word[l].getLemma()+"\n");
-    }//GEN-LAST:event_jButton2ActionPerformed
+        wordBox.append(word[l].getLemma()+"\n");
+    }//GEN-LAST:event_wordActionPerformed
+
+    private void GlosstableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GlosstableMouseClicked
+        glossDecription.setText(Glosstable.getModel().getValueAt(Glosstable.getSelectedRow(), 0).toString());
+        glossDecription.setWrapStyleWord(true);
+        glossDecription.setLineWrap(true);
+    }//GEN-LAST:event_GlosstableMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox ComboBox;
+    private javax.swing.JTable Glosstable;
     private javax.swing.JLabel Label1;
-    private javax.swing.JTextField TextField;
+    private javax.swing.JTextArea glossDecription;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextField property;
+    private javax.swing.JButton word;
+    private javax.swing.JTextArea wordBox;
     // End of variables declaration//GEN-END:variables
 }
