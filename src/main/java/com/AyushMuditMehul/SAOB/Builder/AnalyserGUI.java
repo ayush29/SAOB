@@ -8,6 +8,7 @@ package com.AyushMuditMehul.SAOB.Builder;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.*;
+import edu.stanford.nlp.util.Pair;
 import java.awt.Cursor;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,8 @@ public class AnalyserGUI extends javax.swing.JPanel {
      */
     Document doc;
     List<Sentence> sentenceList;
+    Sentence currentSent;
+    Collection<RelationTriple> currentTripleList;
     int iterator=-1;
     public AnalyserGUI() {
         initComponents();
@@ -46,7 +49,7 @@ public class AnalyserGUI extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         mapButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        analysedSentence = new javax.swing.JTextArea();
+        analysedSentenceView = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         tripleTable = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
@@ -78,11 +81,16 @@ public class AnalyserGUI extends javax.swing.JPanel {
         headingLabel.setText("ANALYSER");
 
         mapButton.setText("Map to RDF Triple");
+        mapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mapButtonActionPerformed(evt);
+            }
+        });
 
-        analysedSentence.setEditable(false);
-        analysedSentence.setColumns(20);
-        analysedSentence.setRows(5);
-        jScrollPane2.setViewportView(analysedSentence);
+        analysedSentenceView.setEditable(false);
+        analysedSentenceView.setColumns(20);
+        analysedSentenceView.setRows(5);
+        jScrollPane2.setViewportView(analysedSentenceView);
 
         tripleTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -206,16 +214,16 @@ public class AnalyserGUI extends javax.swing.JPanel {
         iterator++;
         if(iterator<sentenceList.size()&&iterator>=0)
         {
-            Sentence sent=sentenceList.get(iterator);
-            analysedSentence.setText(sent.text());
+            currentSent=sentenceList.get(iterator);
+            analysedSentenceView.setText(currentSent.text());
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
-            Collection<RelationTriple> tripleList=sent.openieTriples();
+            currentTripleList=currentSent.openieTriples();
             setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
             model.setRowCount(0);
-            for(RelationTriple triple:tripleList)
+            for(RelationTriple triple:currentTripleList)
             {
-                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
                 model.addRow(rowData);
             }
         }        
@@ -245,16 +253,17 @@ public class AnalyserGUI extends javax.swing.JPanel {
             if(sentenceList.size()>1)
              nextButton.setEnabled(true);
             iterator=0;
-            Sentence sent=sentenceList.get(iterator);
-            analysedSentence.setText(sent.text());
+            currentSent=sentenceList.get(iterator);           
+            analysedSentenceView.setText(currentSent.text());
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));   
-            Collection<RelationTriple> tripleList=sent.openieTriples();
+            currentTripleList=currentSent.openieTriples();
             setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
-            for(RelationTriple triple:tripleList)
+            for(RelationTriple triple:currentTripleList)
             {
-                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
-                model.addRow(rowData);
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
+                model.addRow(rowData);                
+                //triple.subject.get(0)
             }
         }
         else
@@ -276,7 +285,7 @@ public class AnalyserGUI extends javax.swing.JPanel {
         sentenceList=null;
         iterator=-1;
         ((DefaultTableModel)tripleTable.getModel()).setRowCount(0);
-        analysedSentence.setText("");        
+        analysedSentenceView.setText("");        
     }//GEN-LAST:event_stopButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
@@ -284,16 +293,16 @@ public class AnalyserGUI extends javax.swing.JPanel {
         iterator--;
         if(iterator<sentenceList.size()&&iterator>=0)
         {
-            Sentence sent=sentenceList.get(iterator);
-            analysedSentence.setText(sent.text());
+            currentSent=sentenceList.get(iterator);
+            analysedSentenceView.setText(currentSent.text());
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
-            Collection<RelationTriple> tripleList=sent.openieTriples();
+            currentTripleList=currentSent.openieTriples();
             setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
             model.setRowCount(0);
-            for(RelationTriple triple:tripleList)
+            for(RelationTriple triple:currentTripleList)
             {
-                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
                 model.addRow(rowData);
             }
         }
@@ -306,10 +315,31 @@ public class AnalyserGUI extends javax.swing.JPanel {
             nextButton.setEnabled(true);
         }
     }//GEN-LAST:event_prevButtonActionPerformed
+
+    private void mapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mapButtonActionPerformed
+        // TODO add your handling code here:
+        System.gc();
+        List<String> nerTags=currentSent.nerTags();
+        RelationTriple triple=(RelationTriple) currentTripleList.toArray()[tripleTable.getSelectedRow()];
+        Pair<Integer,Integer> s=triple.subjectTokenSpan();
+        for(int i=s.first;i<s.second;i++)
+        {
+            triple.subject.get(i).setNER(nerTags.get(i));
+            System.out.println(triple.subject.get(i).originalText()+":"+triple.subject.get(i).ner());
+        }
+        s=triple.objectTokenSpan();
+        for(int i=s.first;i<s.second;i++)
+        {
+            triple.object.get(i-s.first).setNER(nerTags.get(i));
+            System.out.println(triple.object.get(i-s.first).originalText()+":"+triple.object.get(i-s.first).ner());
+        }
+        
+        //pass triple object to Map2RDF
+    }//GEN-LAST:event_mapButtonActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea analysedSentence;
+    private javax.swing.JTextArea analysedSentenceView;
     private javax.swing.JLabel headingLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
