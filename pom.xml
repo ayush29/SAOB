@@ -16,6 +16,11 @@
             <artifactId>stanford-corenlp</artifactId>
             <version>3.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-distribution</artifactId>
+            <version>4.2.6</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -5,6 +5,28 @@
  */
 package com.AyushMuditMehul.SAOB.Builder;
 
+import edu.stanford.nlp.ie.util.RelationTriple;
+import java.io.File;
+import java.util.Collection;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLProperty;
+import org.semanticweb.owlapi.model.PrefixManager;
+import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
+
 /**
  *
  * @author Ayush
@@ -13,9 +35,25 @@ public class Map2RDF extends javax.swing.JPanel {
 
     /**
      * Creates new form Map2RDF
+     * 
      */
-    public Map2RDF() {
+    File ontologyFile;
+    OWLOntologyManager manager;
+    OWLOntology ontology;
+    PrefixManager prefixManager;
+    public Map2RDF(RelationTriple triple) {
         initComponents();
+        ontologyFile = new File(".\\src\\main\\Resources\\tech.owl");
+        manager = OWLManager.createOWLOntologyManager();
+        prefixManager= new DefaultPrefixManager(null, null,
+            "http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#");
+        
+        try {
+            ontology = manager.loadOntologyFromOntologyDocument(ontologyFile);
+        } catch (OWLOntologyCreationException ex) {
+            Logger.getLogger(Map2RDF.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Mapper(triple);
     }
 
     /**
@@ -34,19 +72,21 @@ public class Map2RDF extends javax.swing.JPanel {
         jTextArea1 = new javax.swing.JTextArea();
         jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jComboBox7 = new javax.swing.JComboBox<>();
-        jComboBox4 = new javax.swing.JComboBox<>();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jComboBox6 = new javax.swing.JComboBox<>();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox5 = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        propertyComboBox2 = new javax.swing.JComboBox<>();
+        subjectComboBox2 = new javax.swing.JComboBox<>();
+        objectComboBox2 = new javax.swing.JComboBox<>();
+        subjectComboBox1 = new javax.swing.JComboBox<>();
+        objectComboBox1 = new javax.swing.JComboBox<>();
+        subjectTextfield = new javax.swing.JTextField();
+        propertyTextfield = new javax.swing.JTextField();
+        objectTextfield = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        propertyComboBox1 = new javax.swing.JComboBox<>();
+        objectMainLabel = new javax.swing.JLabel();
+        subjectMainLabel = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
@@ -63,67 +103,86 @@ public class Map2RDF extends javax.swing.JPanel {
 
         jButton4.setText("jButton4");
 
-        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jTextField1.setEditable(false);
-
-        jTextField2.setEditable(false);
-
-        jTextField3.setEditable(false);
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        propertyComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                propertyComboBox2ActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("jLabel1");
+        subjectComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subjectComboBox1ActionPerformed(evt);
+            }
+        });
 
-        jLabel2.setText("jLabel2");
+        objectComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                objectComboBox1ActionPerformed(evt);
+            }
+        });
 
-        jLabel3.setText("jLabel3");
+        subjectTextfield.setEditable(false);
+
+        propertyTextfield.setEditable(false);
+
+        objectTextfield.setEditable(false);
+        objectTextfield.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                objectTextfieldActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Subject");
+
+        jLabel2.setText("Property");
+
+        jLabel3.setText("Object");
+
+        propertyComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                propertyComboBox1ActionPerformed(evt);
+            }
+        });
+
+        objectMainLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        subjectMainLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel6.setText("Choose Appropriate OWL Property:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(137, 137, 137)
+                .addGap(102, 102, 102)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox3, 0, 115, Short.MAX_VALUE)
-                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(155, 155, 155)
-                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjectComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(subjectMainLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(subjectComboBox1, 0, 192, Short.MAX_VALUE))
+                .addGap(113, 113, 113)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(propertyComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(propertyComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox6, 0, 106, Short.MAX_VALUE)
-                    .addComponent(jComboBox5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox7, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(157, 157, 157))
+                    .addComponent(objectComboBox2, 0, 200, Short.MAX_VALUE)
+                    .addComponent(objectComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(objectMainLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(110, 110, 110))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(subjectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(propertyTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(objectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(58, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(168, 168, 168)
                 .addComponent(jLabel1)
-                .addGap(278, 278, 278)
+                .addGap(287, 287, 287)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
@@ -138,27 +197,31 @@ public class Map2RDF extends javax.swing.JPanel {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(subjectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(propertyTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(objectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(objectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(subjectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(objectComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjectComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(propertyComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(objectComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjectComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(propertyComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("jLabel4");
+        jLabel4.setText("Final RDF Triple");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -227,10 +290,279 @@ public class Map2RDF extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void objectTextfieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectTextfieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_objectTextfieldActionPerformed
 
+    private void subjectComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjectComboBox1ActionPerformed
+        // TODO add your handling code here:
+        loadSubjectComboBox2();
+    }//GEN-LAST:event_subjectComboBox1ActionPerformed
+
+    private void propertyComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyComboBox1ActionPerformed
+        // TODO add your handling code here:
+        if(propertyComboBox1.getSelectedIndex()>0)
+        {
+            loadPropertyComboBox2();
+        }
+    }//GEN-LAST:event_propertyComboBox1ActionPerformed
+
+    private void propertyComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyComboBox2ActionPerformed
+        // TODO add your handling code here:
+        if(propertyComboBox2.getSelectedIndex()>0)
+        {
+            if(propertyComboBox1.getSelectedItem().toString().contains("Object Property"))
+            {
+               OWLObjectProperty property= manager.getOWLDataFactory().getOWLObjectProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+               //set subjectMainLabel and object MainLabel by fetching domain and range and load respective dropdowns
+            }
+            else if(propertyComboBox1.getSelectedItem().toString().contains("Data Property"))
+            {
+                OWLDataProperty property= manager.getOWLDataFactory().getOWLDataProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+               //set subjectMainLabel and object MainLabel by fetching domain and range and load respective dropdowns
+            }
+        }
+    }//GEN-LAST:event_propertyComboBox2ActionPerformed
+
+    private void objectComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectComboBox1ActionPerformed
+        // TODO add your handling code here:
+        loadObjectComboBox2();
+    }//GEN-LAST:event_objectComboBox1ActionPerformed
+
+    void loadSubjectComboBox1()
+    {
+        subjectComboBox1.removeAllItems();
+        if(!subjectMainLabel.getText().isEmpty())
+        {
+            subjectComboBox1.addItem("Choose Resource Type");
+            subjectComboBox1.addItem("New Resource");
+            subjectComboBox1.addItem("Existing Resource");
+        }
+    }
+    void setSubjectComboBox1(String str)
+    {
+        int n=subjectComboBox1.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(subjectComboBox1.getItemAt(i).contains(str))
+                    {
+                        subjectComboBox1.setSelectedIndex(i);
+                    }
+                }
+    }
+    void loadSubjectComboBox2()
+    {
+        subjectComboBox2.removeAllItems();
+        if(subjectComboBox1.getSelectedItem().toString().contains("Existing Resource"))
+        {          
+          //load all individuals in this combobox
+            subjectComboBox2.addItem("Select Resource");
+            Set<OWLNamedIndividual> list=ontology.getIndividualsInSignature();
+            for(OWLNamedIndividual i:list)
+            {
+               Collection<OWLClassExpression> classList=EntitySearcher.getTypes(i, ontology);
+               String classes="";
+               for(OWLClassExpression exp:classList)
+               {
+                   classes+=exp.asOWLClass().getIRI().getShortForm()+";";
+               }
+                subjectComboBox2.addItem(i.getIRI().getShortForm()+"(class:"+classes+")");
+            }
+        }        
+    }
+    void setSubjectComboBox2(String str)
+    {
+        int n=subjectComboBox2.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(subjectComboBox2.getItemAt(i).contains(str))
+                    {
+                        subjectComboBox2.setSelectedIndex(i);
+                    }
+                }
+    }
+    void loadPropertyComboBox1()
+    {
+        propertyComboBox1.removeAllItems();
+        propertyComboBox1.addItem("Choose Property Type");
+        propertyComboBox1.addItem("Object Property");
+        propertyComboBox1.addItem("Data Property");
+    }
+    void setPropertyComboBox1(String str)
+    {
+        int n=propertyComboBox1.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(propertyComboBox1.getItemAt(i).contains(str))
+                    {
+                        propertyComboBox1.setSelectedIndex(i);
+                    }
+                }
+    }
+    void loadPropertyComboBox2()
+    {
+        propertyComboBox2.removeAllItems();
+        if(propertyComboBox1.getSelectedItem().toString().contains("Object Property"))
+        {
+            propertyComboBox2.addItem("Select Property");
+            Set<OWLObjectProperty> objectprop = ontology.getObjectPropertiesInSignature();
+            for(OWLObjectProperty op : objectprop)
+            {
+               propertyComboBox2.addItem(op.getIRI().getShortForm());
+            }
+            
+        }
+        else if(propertyComboBox1.getSelectedItem().toString().contains("Data Property"))
+        {
+            propertyComboBox2.addItem("Select Property");
+            Set<OWLDataProperty> dataprop = ontology.getDataPropertiesInSignature();
+            for(OWLDataProperty dp : dataprop)
+            {
+                propertyComboBox2.addItem(dp.getIRI().getShortForm());
+            }
+        }
+    }
+    void setPropertyComboBox2(String str)
+    {
+        int n=propertyComboBox2.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(propertyComboBox2.getItemAt(i).contains(str))
+                    {
+                        propertyComboBox2.setSelectedIndex(i);
+                    }
+                }
+    }
+    void loadObjectComboBox1()
+    {
+        objectComboBox1.removeAllItems();
+        if(objectMainLabel.getText().contains("class"))
+        {
+            objectComboBox1.addItem("Choose Resource Type");
+            objectComboBox1.addItem("New Resource");
+            objectComboBox1.addItem("Existing Resource");
+        }        
+    }
+    void setObjectComboBox1(String str)
+    {
+        int n=propertyComboBox1.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(objectComboBox1.getItemAt(i).contains(str))
+                    {
+                        objectComboBox1.setSelectedIndex(i);
+                    }
+                }
+    }
+    void loadObjectComboBox2()
+    {
+        objectComboBox2.removeAllItems();
+        if(objectComboBox1.getSelectedItem().toString().contains("Existing Resource"))
+        {
+            objectComboBox2.addItem("Select Resource");
+            //load all individuals
+            Set<OWLNamedIndividual> list=ontology.getIndividualsInSignature();
+            for(OWLNamedIndividual i:list)
+            {
+                Collection<OWLClassExpression> classList=EntitySearcher.getTypes(i, ontology);
+               String classes="";
+               for(OWLClassExpression exp:classList)
+               {
+                   classes+=exp.asOWLClass().getIRI().getShortForm()+";";
+               }
+                objectComboBox2.addItem(i.getIRI().getShortForm()+"(class:"+classes+")");                
+            }
+        }
+    }
+    void setObjectComboBox2(String str)
+    {
+        int n=objectComboBox2.getItemCount();
+                for(int i=1;i<n;i++)
+                {
+                    if(objectComboBox2.getItemAt(i).contains(str))
+                    {
+                        objectComboBox2.setSelectedIndex(i);
+                    }
+                }
+    }
+    
+    void Mapper(RelationTriple triple)
+    {
+        OWLProperty property=propertyMapper(triple.relationGloss());
+        if(property!=null)
+        {            
+            loadPropertyComboBox1();  
+            IRI domainIRI=null;//get it from OWL property 
+            OWLNamedIndividual subjectResource=IndividualMapper(triple.subjectGloss(),domainIRI);
+            subjectMainLabel.setText("class:"+domainIRI.getShortForm());
+            loadSubjectComboBox1();
+            if(subjectResource!=null)//i.e. mapped to some existing resource
+            {
+                setSubjectComboBox1("Existing Resource");
+                loadSubjectComboBox2();
+                setSubjectComboBox2(subjectResource.getIRI().getShortForm());
+            }
+            else
+            {
+                setSubjectComboBox1("New Resource");
+            }
+            if(property.isOWLDataProperty())
+            {                              
+                setPropertyComboBox1("Data Property");                
+                OWLDatatype objectDataType;//get it from property
+                //set object main label 
+            }
+            else//otherwise it is object property
+            {
+                setPropertyComboBox1("Object Property");
+                IRI rangeIRI=null;//get it from property
+                OWLIndividual objectResource=IndividualMapper(triple.objectGloss(),rangeIRI);
+                //set object main label and load and set combo boxes
+            }
+            loadPropertyComboBox2();
+            setPropertyComboBox2(property.getIRI().getShortForm());
+            
+            
+            
+        }
+        else
+        {
+            loadPropertyComboBox1();
+        }
+        
+    }
+    
+    OWLProperty propertyMapper(String propertyText)
+    {
+        PredicateRulesManager prm= new PredicateRulesManager();
+        String propertyIRI=prm.ruleSearch(propertyText);
+        if(propertyIRI==null||propertyIRI.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            OWLDataProperty dataProperty;
+            OWLObjectProperty objectProperty;
+            if(ontology.containsDataPropertyInSignature(IRI.create(propertyIRI))) //this function returns boolean
+            {   dataProperty = manager.getOWLDataFactory().getOWLDataProperty(IRI.create(propertyIRI));
+                System.out.println(dataProperty.getIRI().getShortForm());   
+                return dataProperty;
+            }
+            else if(ontology.containsObjectPropertyInSignature(IRI.create(propertyIRI)))
+            {  objectProperty = manager.getOWLDataFactory().getOWLObjectProperty(IRI.create(propertyIRI));
+                System.out.println(objectProperty.getIRI().getShortForm());
+                return objectProperty;
+            }
+            else
+                return null;        
+        }
+          
+    }
+    OWLNamedIndividual IndividualMapper(String text,IRI classIRI)
+    {
+        return null;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -238,23 +570,25 @@ public class Map2RDF extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
-    private javax.swing.JComboBox<String> jComboBox4;
-    private javax.swing.JComboBox<String> jComboBox5;
-    private javax.swing.JComboBox<String> jComboBox6;
-    private javax.swing.JComboBox<String> jComboBox7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JComboBox<String> objectComboBox1;
+    private javax.swing.JComboBox<String> objectComboBox2;
+    private javax.swing.JLabel objectMainLabel;
+    private javax.swing.JTextField objectTextfield;
+    private javax.swing.JComboBox<String> propertyComboBox1;
+    private javax.swing.JComboBox<String> propertyComboBox2;
+    private javax.swing.JTextField propertyTextfield;
+    private javax.swing.JComboBox<String> subjectComboBox1;
+    private javax.swing.JComboBox<String> subjectComboBox2;
+    private javax.swing.JLabel subjectMainLabel;
+    private javax.swing.JTextField subjectTextfield;
     // End of variables declaration//GEN-END:variables
 }
