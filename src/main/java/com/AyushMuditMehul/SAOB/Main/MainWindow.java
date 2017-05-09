@@ -6,6 +6,8 @@
 package com.AyushMuditMehul.SAOB.Main;
 
 import com.AyushMuditMehul.SAOB.Builder.AnalyserGUI;
+import com.AyushMuditMehul.SAOB.Builder.Map2RDF;
+import edu.stanford.nlp.ie.util.RelationTriple;
 import java.awt.CardLayout;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 
@@ -21,7 +23,7 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public MainWindow() {
         initComponents();
-        rootPanel.add("Analyser", new AnalyserGUI());   
+        rootPanel.add("Analyser", new AnalyserGUI(this));   
         ((CardLayout)rootPanel.getLayout()).show(rootPanel, "Analyser");
     }
 
@@ -57,6 +59,14 @@ public class MainWindow extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    
+    public void temporaryMethod(RelationTriple triple)
+    {
+        Map2RDF ob=new Map2RDF(triple);
+        rootPanel.add("Mapper", ob);           
+        ((CardLayout)rootPanel.getLayout()).show(rootPanel, "Mapper");
+        System.out.println("caught");
+    }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

@@ -5,6 +5,7 @@
  */
 package com.AyushMuditMehul.SAOB.Builder;
 
+import com.AyushMuditMehul.SAOB.Main.MainWindow;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.*;
@@ -28,8 +29,10 @@ public class AnalyserGUI extends javax.swing.JPanel {
     Sentence currentSent;
     Collection<RelationTriple> currentTripleList;
     int iterator=-1;
-    public AnalyserGUI() {
+    MainWindow manager;
+    public AnalyserGUI(MainWindow m) {
         initComponents();
+        manager=m;
     }
 
     /**
@@ -319,22 +322,23 @@ public class AnalyserGUI extends javax.swing.JPanel {
     private void mapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mapButtonActionPerformed
         // TODO add your handling code here:
         System.gc();
-        List<String> nerTags=currentSent.nerTags();
+        //List<String> nerTags=currentSent.nerTags();
         RelationTriple triple=(RelationTriple) currentTripleList.toArray()[tripleTable.getSelectedRow()];
-        Pair<Integer,Integer> s=triple.subjectTokenSpan();
+        /*Pair<Integer,Integer> s=triple.subjectTokenSpan();  //ner tagging
         for(int i=s.first;i<s.second;i++)
         {
-            triple.subject.get(i).setNER(nerTags.get(i));
-            System.out.println(triple.subject.get(i).originalText()+":"+triple.subject.get(i).ner());
+        triple.subject.get(i).setNER(nerTags.get(i));
+        System.out.println(triple.subject.get(i).originalText()+":"+triple.subject.get(i).ner());
         }
         s=triple.objectTokenSpan();
         for(int i=s.first;i<s.second;i++)
         {
-            triple.object.get(i-s.first).setNER(nerTags.get(i));
-            System.out.println(triple.object.get(i-s.first).originalText()+":"+triple.object.get(i-s.first).ner());
-        }
+        triple.object.get(i-s.first).setNER(nerTags.get(i));
+        System.out.println(triple.object.get(i-s.first).originalText()+":"+triple.object.get(i-s.first).ner());
+        }*/
         
         //pass triple object to Map2RDF
+        manager.temporaryMethod(triple);
     }//GEN-LAST:event_mapButtonActionPerformed
     
 

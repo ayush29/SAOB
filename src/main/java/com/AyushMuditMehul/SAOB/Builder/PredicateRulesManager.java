@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -130,7 +132,7 @@ public class PredicateRulesManager {
         }
         catch(Exception e)
         {
-            System.out.println(e);
+            Logger.getLogger(Map2RDF.class.getName()).log(Level.SEVERE, null, e);
             
         }
         return null;
