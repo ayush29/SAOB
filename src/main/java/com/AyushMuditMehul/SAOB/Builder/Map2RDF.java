@@ -7,22 +7,31 @@ package com.AyushMuditMehul.SAOB.Builder;
 
 import edu.stanford.nlp.ie.util.RelationTriple;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -31,6 +40,7 @@ import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 /**
  *
@@ -47,10 +57,13 @@ public class Map2RDF extends javax.swing.JPanel {
     OWLOntology ontology;
     PrefixManager prefixManager;
     RelationTriple triple;
-    OWLEntity mappedSubjectEntity,mappedProperty,mappedObjectEntity;
+    OWLLiteral mappedObjectLiteral;//to save mapped object owlLiteral if property mapped is a data property
+    ArrayList<OWLAxiom> owlAxiomList;
+    boolean eventFlag=true;//true=event caused by user, false event caused by program.
     public Map2RDF(RelationTriple triple) {
         initComponents();
         this.triple=triple;
+        owlAxiomList=new ArrayList<OWLAxiom>();
         ontologyFile = new File(".\\src\\main\\Resources\\tech.owl");
         manager = OWLManager.createOWLOntologyManager();
         prefixManager= new DefaultPrefixManager(null, null,
@@ -77,7 +90,7 @@ public class Map2RDF extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        finalTripleTextArea = new javax.swing.JTextArea();
         addToOntologyButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         propertyComboBox2 = new javax.swing.JComboBox<>();
@@ -98,11 +111,11 @@ public class Map2RDF extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        createTripleButton = new javax.swing.JButton();
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        finalTripleTextArea.setColumns(20);
+        finalTripleTextArea.setRows(5);
+        jScrollPane1.setViewportView(finalTripleTextArea);
 
         addToOntologyButton.setText("Add to Ontology");
 
@@ -238,7 +251,12 @@ public class Map2RDF extends javax.swing.JPanel {
 
         cancelButton.setText("Cancel");
 
-        jButton1.setText("Create Triple");
+        createTripleButton.setText("Create Triple");
+        createTripleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createTripleButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -264,7 +282,7 @@ public class Map2RDF extends javax.swing.JPanel {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(529, 529, 529)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(87, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -275,7 +293,7 @@ public class Map2RDF extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -296,104 +314,236 @@ public class Map2RDF extends javax.swing.JPanel {
     }//GEN-LAST:event_objectTextfieldActionPerformed
 
     private void subjectComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjectComboBox1ActionPerformed
-        // TODO add your handling code here:
-        loadSubjectComboBox2();
+        // TODO add your handling code here:        
+       if(eventFlag)
+       {
+           loadSubjectComboBox2();
+       }
     }//GEN-LAST:event_subjectComboBox1ActionPerformed
 
     private void propertyComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyComboBox1ActionPerformed
         // TODO add your handling code here:
-        if(propertyComboBox1.getSelectedIndex()>0)
+        if(eventFlag)
         {
-            loadPropertyComboBox2();
+            if(propertyComboBox1.getSelectedIndex()>0)
+            {
+                loadPropertyComboBox2();
+            }
+            else
+            {
+                eventFlag=false;
+                propertyComboBox2.removeAllItems();
+                subjectMainLabel.setText("");
+                objectMainLabel.setText("");
+                subjectComboBox1.removeAllItems();
+                subjectComboBox2.removeAllItems();
+                objectComboBox1.removeAllItems();
+                objectComboBox2.removeAllItems();
+                eventFlag=true;
+            }
         }
     }//GEN-LAST:event_propertyComboBox1ActionPerformed
 
     private void propertyComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyComboBox2ActionPerformed
         // TODO add your handling code here:
-        if(propertyComboBox2.getSelectedIndex()>0)
+        if(eventFlag)
         {
-            OWLProperty property;
-            IRI domainIRI = null;
-            if(propertyComboBox1.getSelectedItem().toString().contains("Object Property"))
+            if(propertyComboBox2.getSelectedIndex()>0)
             {
-                property= manager.getOWLDataFactory().getOWLObjectProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
-                IRI rangeIRI;//get it from property
-                OWLObjectPropertyDomainAxiom domainAxiom = (OWLObjectPropertyDomainAxiom) ontology.getObjectPropertyDomainAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as domain of any property
-                OWLObjectPropertyRangeAxiom rangeAxiom = (OWLObjectPropertyRangeAxiom) ontology.getObjectPropertyRangeAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as range of any property
-                domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
-                rangeIRI = rangeAxiom.getRange().asOWLClass().getIRI();
-                OWLNamedIndividual objectResource = IndividualMapper(triple.objectGloss(), rangeIRI);
-                //set object main label and load and set combo boxes
-                objectMainLabel.setText("class:" + rangeIRI.getShortForm());
-                loadObjectComboBox1();
-                if (objectResource != null)//i.e. mapped to some existing resource
-                {
-                    setObjectComboBox1("Existing Resource");
-                    loadObjectComboBox2();
-                    setObjectComboBox2(objectResource.getIRI().getShortForm());
-                } else {
-                    setObjectComboBox1("New Resource");
+                OWLProperty property;
+
+                IRI domainIRI = null;
+                if (propertyComboBox1.getSelectedItem().toString().contains("Object Property")) {
+                    property = manager.getOWLDataFactory().getOWLObjectProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
+                    IRI rangeIRI;//get it from property
+                    OWLObjectPropertyDomainAxiom domainAxiom = (OWLObjectPropertyDomainAxiom) ontology.getObjectPropertyDomainAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as domain of any property
+                    OWLObjectPropertyRangeAxiom rangeAxiom = (OWLObjectPropertyRangeAxiom) ontology.getObjectPropertyRangeAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as range of any property
+                    domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
+                    rangeIRI = rangeAxiom.getRange().asOWLClass().getIRI();
+                    OWLNamedIndividual objectResource = IndividualMapper(triple.objectGloss(), rangeIRI);
+                    //set object main label and load and set combo boxes
+                    objectMainLabel.setText("class:" + rangeIRI.getShortForm());
+                    loadObjectComboBox1();
+                    if (objectResource != null)//i.e. mapped to some existing resource
+                    {
+                        setObjectComboBox1("Existing Resource");
+                        loadObjectComboBox2();
+                        setObjectComboBox2(objectResource.getIRI().getShortForm());
+                    } else {
+                        setObjectComboBox1("New Resource");
+                    }
+                } else if (propertyComboBox1.getSelectedItem().toString().contains("Data Property")) {
+                    property = manager.getOWLDataFactory().getOWLDataProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
+                    OWLDataPropertyDomainAxiom domainAxiom = (OWLDataPropertyDomainAxiom) ontology.getDataPropertyDomainAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as domain of any property
+                    OWLDataPropertyRangeAxiom rangeAxiom = (OWLDataPropertyRangeAxiom) ontology.getDataPropertyRangeAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as range of any property
+                    domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
+                    OWLDatatype rangeDataType = rangeAxiom.getRange().asOWLDatatype();
+                    //set object main label 
+                    objectMainLabel.setText("Literal:" + rangeDataType.getIRI().getShortForm());
+                    mappedObjectLiteral =manager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
                 }
-            }
-            else if(propertyComboBox1.getSelectedItem().toString().contains("Data Property"))
-            {
-                property = manager.getOWLDataFactory().getOWLDataProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
-                OWLDataPropertyDomainAxiom domainAxiom = (OWLDataPropertyDomainAxiom) ontology.getDataPropertyDomainAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as domain of any property
-                OWLDataPropertyRangeAxiom rangeAxiom = (OWLDataPropertyRangeAxiom) ontology.getDataPropertyRangeAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as range of any property
-                domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
-                OWLDatatype rangeDataType = rangeAxiom.getRange().asOWLDatatype();
-                //set object main label 
-                objectMainLabel.setText("Literal:"+rangeDataType.getIRI().getShortForm());
-                mappedObjectEntity=rangeDataType;
-            }
-            OWLNamedIndividual subjectResource=IndividualMapper(triple.subjectGloss(),domainIRI);
-            subjectMainLabel.setText("class:"+domainIRI.getShortForm());
-            loadSubjectComboBox1();
-            if(subjectResource!=null)//i.e. mapped to some existing resource
-            {
-                setSubjectComboBox1("Existing Resource");
-                loadSubjectComboBox2();
-                setSubjectComboBox2(subjectResource.getIRI().getShortForm());
+                OWLNamedIndividual subjectResource = IndividualMapper(triple.subjectGloss(), domainIRI);
+                subjectMainLabel.setText("class:" + domainIRI.getShortForm());
+                loadSubjectComboBox1();
+                if (subjectResource != null)//i.e. mapped to some existing resource
+                {
+                    setSubjectComboBox1("Existing Resource");
+                    loadSubjectComboBox2();
+                    setSubjectComboBox2(subjectResource.getIRI().getShortForm());
+                } else {
+                    setSubjectComboBox1("New Resource");
+                }
             }
             else
             {
-                setSubjectComboBox1("New Resource");
+                eventFlag=false;
+                subjectMainLabel.setText("");
+                subjectComboBox1.removeAllItems();
+                subjectComboBox2.removeAllItems();
+                objectMainLabel.setText("");
+                objectComboBox1.removeAllItems();
+                objectComboBox2.removeAllItems();
+                eventFlag=true;
             }
         }
     }//GEN-LAST:event_propertyComboBox2ActionPerformed
 
     private void objectComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectComboBox1ActionPerformed
         // TODO add your handling code here:
-        loadObjectComboBox2();
+       if(eventFlag)
+       {
+           loadObjectComboBox2();
+       }
     }//GEN-LAST:event_objectComboBox1ActionPerformed
 
     private void subjectComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subjectComboBox2ActionPerformed
         // TODO add your handling code here:
+        if(eventFlag)
+        {
+            
+        }
     }//GEN-LAST:event_subjectComboBox2ActionPerformed
+
+    private void createTripleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createTripleButtonActionPerformed
+        // TODO add your handling code here:
+        finalTripleTextArea.setText("");
+        //Subject related
+        OWLNamedIndividual subjectIndividual = null;
+        OWLDataFactory df=manager.getOWLDataFactory();
+        String tripleString;//using it again and again to display triple in textarea
+        if(subjectComboBox1.getSelectedItem().toString().contains("Existing Resource")&&subjectComboBox2.getSelectedIndex()>0)
+        {
+         String selectedIndividual=subjectComboBox2.getSelectedItem().toString();
+         subjectIndividual= manager.getOWLDataFactory().getOWLNamedIndividual(":"+selectedIndividual.substring(0,selectedIndividual.indexOf("(") ), prefixManager);
+         OWLAnnotationProperty labelProperty = df.getRDFSLabel();
+         OWLLiteral label=df.getOWLLiteral(triple.subjectGloss());
+         OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty,subjectIndividual.getIRI() , label);
+         owlAxiomList.add(labelAxiom);
+         tripleString=subjectIndividual.getIRI().getShortForm()+" "+labelProperty.getIRI().getShortForm()+" "+triple.subjectGloss()+"\n";
+         finalTripleTextArea.append(tripleString);
+        }
+        else if(subjectComboBox1.getSelectedItem().toString().contains("New Resource"))
+        {                  
+            OWLAnnotationProperty labelProperty = df.getRDFSLabel();
+            String className = subjectMainLabel.getText();
+            className = className.substring(className.indexOf(":")+1);
+            OWLClass owlClass = df.getOWLClass(":" + className, prefixManager); //pass class iri in this
+            String individualName = triple.subjectGloss();
+            OWLLiteral label = df.getOWLLiteral(individualName);//label contains original name
+            individualName = individualName.replace(' ', '_');//replacing space with _ 
+            subjectIndividual = df.getOWLNamedIndividual(":" + individualName, prefixManager);
+            OWLAxiom typeOfAxiom = df.getOWLClassAssertionAxiom(owlClass, subjectIndividual);
+            OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, subjectIndividual.getIRI(), label);
+            owlAxiomList.add(typeOfAxiom);
+            owlAxiomList.add(labelAxiom);
+            tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.subjectGloss() + "\n";
+            finalTripleTextArea.append(tripleString);
+        }
+        else
+        {
+            //error display mapping incomplete
+        }
+        
+        //property related
+        if(propertyComboBox1.getSelectedItem().toString().contains("Object Property")&&propertyComboBox2.getSelectedIndex()>0)
+        {
+         
+            OWLNamedIndividual objectIndividual = null;
+            if (objectComboBox1.getSelectedItem().toString().contains("Existing Resource") && objectComboBox2.getSelectedIndex() > 0) {
+                String selectedIndividual = objectComboBox2.getSelectedItem().toString();
+                objectIndividual = manager.getOWLDataFactory().getOWLNamedIndividual(":" + selectedIndividual.substring(0, selectedIndividual.indexOf("(")), prefixManager);
+                OWLAnnotationProperty labelProperty = df.getRDFSLabel();
+                OWLLiteral label = df.getOWLLiteral(triple.objectGloss());
+                OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, objectIndividual.getIRI(), label);
+                owlAxiomList.add(labelAxiom);
+                tripleString = objectIndividual.getIRI().getShortForm() + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
+                finalTripleTextArea.append(tripleString);
+            } else if (objectComboBox1.getSelectedItem().toString().contains("New Resource")) {
+                OWLAnnotationProperty labelProperty = df.getRDFSLabel();
+                String className = objectMainLabel.getText();
+                className = className.substring(className.indexOf(":" + 1));
+                OWLClass owlClass = df.getOWLClass(":" + className, prefixManager); //pass class iri in this
+                String individualName = triple.objectGloss();
+                OWLLiteral label = df.getOWLLiteral(individualName);//label contains original name
+                individualName = individualName.replace(' ', '_');//replacing space with _ 
+                objectIndividual = df.getOWLNamedIndividual(":" + individualName, prefixManager);
+                OWLAxiom typeOfAxiom = df.getOWLClassAssertionAxiom(owlClass, objectIndividual);
+                OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, objectIndividual.getIRI(), label);
+                owlAxiomList.add(typeOfAxiom);
+                owlAxiomList.add(labelAxiom);
+                tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
+                finalTripleTextArea.append(tripleString);
+            } else {
+                //error display mapping incomplete
+            }
+            OWLObjectProperty property= df.getOWLObjectProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+            OWLAxiom objectPropertyAxiom =  df.getOWLObjectPropertyAssertionAxiom((OWLObjectPropertyExpression)property, subjectIndividual, objectIndividual);
+            owlAxiomList.add(objectPropertyAxiom);
+            tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+objectIndividual.getIRI().getShortForm()+"\n";
+            finalTripleTextArea.append(tripleString);
+        }
+        else if(propertyComboBox1.getSelectedItem().toString().contains("Data Property")&&propertyComboBox2.getSelectedIndex()>0)
+        {
+            OWLDataProperty property= df.getOWLDataProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+            OWLAxiom dataPropertyAxiom =  df.getOWLDataPropertyAssertionAxiom((OWLDataPropertyExpression)property, subjectIndividual,mappedObjectLiteral);
+            owlAxiomList.add(dataPropertyAxiom);
+            tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+mappedObjectLiteral.getLiteral();
+            finalTripleTextArea.append(tripleString);
+        }
+        else
+        {
+            //error display mapping incomplete
+        }
+    }//GEN-LAST:event_createTripleButtonActionPerformed
 
     void loadSubjectComboBox1()
     {
-        subjectComboBox1.removeAllItems();
+        eventFlag=false;
+        subjectComboBox1.removeAllItems();        
         if(!subjectMainLabel.getText().isEmpty())
         {
             subjectComboBox1.addItem("Choose Resource Type");
             subjectComboBox1.addItem("New Resource");
             subjectComboBox1.addItem("Existing Resource");
         }
+        eventFlag=true;
     }
     void setSubjectComboBox1(String str)
     {
+        eventFlag=false;
         int n=subjectComboBox1.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(subjectComboBox1.getItemAt(i).contains(str))
-                    {
-                        subjectComboBox1.setSelectedIndex(i);
+                    {                        
+                        subjectComboBox1.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=true;
     }
     void loadSubjectComboBox2()
     {
+        eventFlag=false;
         subjectComboBox2.removeAllItems();
         if(subjectComboBox1.getSelectedItem().toString().contains("Existing Resource"))
         {          
@@ -411,38 +561,46 @@ public class Map2RDF extends javax.swing.JPanel {
                 subjectComboBox2.addItem(i.getIRI().getShortForm()+"(class:"+classes+")");
             }
         }        
+        eventFlag=true;
     }
     void setSubjectComboBox2(String str)
     {
+        eventFlag=false;
         int n=subjectComboBox2.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(subjectComboBox2.getItemAt(i).contains(str))
-                    {
-                        subjectComboBox2.setSelectedIndex(i);
+                    {                        
+                        subjectComboBox2.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=true;                
     }
     void loadPropertyComboBox1()
     {
+        eventFlag=false;
         propertyComboBox1.removeAllItems();
         propertyComboBox1.addItem("Choose Property Type");
         propertyComboBox1.addItem("Object Property");
         propertyComboBox1.addItem("Data Property");
+        eventFlag=true;
     }
     void setPropertyComboBox1(String str)
     {
+        eventFlag=false;
         int n=propertyComboBox1.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(propertyComboBox1.getItemAt(i).contains(str))
-                    {
-                        propertyComboBox1.setSelectedIndex(i);
+                    {                        
+                        propertyComboBox1.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=false;
     }
     void loadPropertyComboBox2()
     {
+        eventFlag=false;
         propertyComboBox2.removeAllItems();
         if(propertyComboBox1.getSelectedItem().toString().contains("Object Property"))
         {
@@ -463,20 +621,24 @@ public class Map2RDF extends javax.swing.JPanel {
                 propertyComboBox2.addItem(dp.getIRI().getShortForm());
             }
         }
+        eventFlag=true;
     }
     void setPropertyComboBox2(String str)
     {
+        eventFlag=false;
         int n=propertyComboBox2.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(propertyComboBox2.getItemAt(i).contains(str))
-                    {
-                        propertyComboBox2.setSelectedIndex(i);
+                    {                        
+                        propertyComboBox2.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=true;                
     }
     void loadObjectComboBox1()
     {
+        eventFlag=false;
         objectComboBox1.removeAllItems();
         if(objectMainLabel.getText().contains("class"))
         {
@@ -484,20 +646,24 @@ public class Map2RDF extends javax.swing.JPanel {
             objectComboBox1.addItem("New Resource");
             objectComboBox1.addItem("Existing Resource");
         }        
+        eventFlag=true;
     }
     void setObjectComboBox1(String str)
     {
+        eventFlag=false;
         int n=propertyComboBox1.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(objectComboBox1.getItemAt(i).contains(str))
-                    {
-                        objectComboBox1.setSelectedIndex(i);
+                    {                        
+                        objectComboBox1.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=true;
     }
     void loadObjectComboBox2()
     {
+        eventFlag=false;
         objectComboBox2.removeAllItems();
         if(objectComboBox1.getSelectedItem().toString().contains("Existing Resource"))
         {
@@ -515,17 +681,20 @@ public class Map2RDF extends javax.swing.JPanel {
                 objectComboBox2.addItem(i.getIRI().getShortForm()+"(class:"+classes+")");                
             }
         }
+        eventFlag=true;
     }
     void setObjectComboBox2(String str)
     {
+        eventFlag=false;
         int n=objectComboBox2.getItemCount();
                 for(int i=1;i<n;i++)
                 {
                     if(objectComboBox2.getItemAt(i).contains(str))
-                    {
-                        objectComboBox2.setSelectedIndex(i);
+                    {                        
+                        objectComboBox2.setSelectedIndex(i);                        
                     }
                 }
+        eventFlag=true;        
     }
     
     void Mapper()
@@ -545,7 +714,7 @@ public class Map2RDF extends javax.swing.JPanel {
                 OWLDatatype rangeDataType=rangeAxiom.getRange().asOWLDatatype();               
                 //set object main label 
                 objectMainLabel.setText("Literal:"+rangeDataType.getIRI().getShortForm());
-                mappedObjectEntity=rangeDataType;
+                mappedObjectLiteral =  manager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
             }
             else//otherwise it is object property
             {
@@ -619,14 +788,33 @@ public class Map2RDF extends javax.swing.JPanel {
           
     }
     OWLNamedIndividual IndividualMapper(String text,IRI classIRI)
-    {
+    {        
+         //currently not using classIRI, possible optimisation: there are higher chances that text represents an individual of class represented by class IRI
+        Collection<OWLAnnotation> labelList;          
+        String label;
+         OWLAnnotationProperty labelProperty = manager.getOWLDataFactory().getRDFSLabel();            
+            Set<OWLNamedIndividual> individual = ontology.getIndividualsInSignature();
+            for(OWLNamedIndividual i : individual)
+            {                   
+                labelList=EntitySearcher.getAnnotations((OWLEntity)i, ontology, labelProperty);
+                for(OWLAnnotation x : labelList)
+                {                                 
+                    label=x.toString();
+                    label=label.substring(label.indexOf('"')+1, label.lastIndexOf('"'));                        
+                    if(text.equalsIgnoreCase(label))
+                    {                                                
+                        return i;
+                    }
+                }
+            }
         return null;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addToOntologyButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton createTripleButton;
+    private javax.swing.JTextArea finalTripleTextArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -635,7 +823,6 @@ public class Map2RDF extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JComboBox<String> objectComboBox1;
     private javax.swing.JComboBox<String> objectComboBox2;
     private javax.swing.JLabel objectMainLabel;

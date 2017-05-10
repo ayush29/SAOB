@@ -329,6 +329,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Networking -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Networking">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Computer Networking</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science">

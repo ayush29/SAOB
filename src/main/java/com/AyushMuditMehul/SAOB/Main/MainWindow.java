@@ -64,8 +64,7 @@ public class MainWindow extends javax.swing.JFrame {
     {
         Map2RDF ob=new Map2RDF(triple);
         rootPanel.add("Mapper", ob);           
-        ((CardLayout)rootPanel.getLayout()).show(rootPanel, "Mapper");
-        System.out.println("caught");
+        ((CardLayout)rootPanel.getLayout()).show(rootPanel, "Mapper");        
     }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
