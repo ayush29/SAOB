@@ -34,11 +34,11 @@ public class PredicateRulesManager {
             BufferedReader buf = new BufferedReader(fin);
             String line;
             String[] Sline;
-            int count=0,i,n,x,flag=-1;
+            int flag=-1;
             left = left.toLowerCase();
-            n=left.length();
             while((line=buf.readLine())!=null)
-                {   if(left.charAt(0)<line.charAt(0))
+                {   Sline=line.split("->");
+                    if(left.compareTo(Sline[0])<0)
                     {
                         flag=1;
                         pout.println(left+"->"+right);
@@ -47,29 +47,16 @@ public class PredicateRulesManager {
                             pout.println(line);
                         break;
                     }
-                    Sline=line.split("->");
-                    i=0;
-                    if(n<Sline[0].length())
-                        x=n;
-                    else
-                        x=Sline[0].length();
-                    while(i<x&&(left.charAt(i)==Sline[0].charAt(i)))
+                    else if(left.compareTo(Sline[0])>0)
                     {
-                        i++;
-                    }
-                    if(i>=count)
-                    {
-                        count=i;
                         pout.println(line);
                     }
-                    else
+                    else        //string is already present
                     {
                         flag=1;
-                        pout.println(left+"->"+right);
                         pout.println(line);
                         while((line=buf.readLine())!=null)
                             pout.println(line);
-                        break;
                     }
                 }
             if(flag==-1)
@@ -96,38 +83,20 @@ public class PredicateRulesManager {
             BufferedReader buf = new BufferedReader(fin);
             String line;
             left=left.toLowerCase();
-            int count=0,i,n,x;
             String[] Sline;
-             n=left.length();
             while((line=buf.readLine())!=null)
             {   
-                if(left.charAt(0)<line.charAt(0))
+                Sline=line.split("->");
+                if(left.compareTo(Sline[0])<0)
                 {   buf.close();
                     break;
                 }
-                Sline=line.split("->");
-                i=0;
-                if(left.equals(Sline[0]))
+                if(left.compareTo(Sline[0])==0)
                 {    
                     buf.close();
                     return Sline[1];
                 }
-                if(n<Sline[0].length())
-                        x=n;
-                else
-                        x=Sline[0].length();
-                   
-                while(i<x&&(left.charAt(i)==Sline[0].charAt(i)))
-                    {
-                        i++;
-                    }
-                    if(i<count)
-                    {
-                          buf.close();
-                        break;
-                    }
-                    else
-                        count=i;    
+                    
              }
         }
         catch(Exception e)

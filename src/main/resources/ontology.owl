@@ -13,26 +13,6 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Annotation properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.w3.org/2000/01/rdf-schema#label -->
-
-    <rdf:Description rdf:about="http://www.w3.org/2000/01/rdf-schema#label">
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-    </rdf:Description>
-    
-
-
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
     // Object Properties
     //
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +92,6 @@
     <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#independent -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#independent">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ReflexiveProperty"/>
         <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
         <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
     </owl:ObjectProperty>
@@ -329,19 +308,43 @@
     
 
 
-    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Networking -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Networking">
-        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Computer Networking</rdfs:label>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science">
         <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:label>Computer Science</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">computer science</rdfs:label>
+        <rdfs:label>testing</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">networking</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wifi -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wifi">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <dependent rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless"/>
+        <subfield rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science"/>
+        <subfield rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wifi</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <dependent rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking"/>
     </owl:NamedIndividual>
     
 
@@ -350,6 +353,7 @@
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Science_&amp;_Technology">
         <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:label>Science and Technology</rdfs:label>
     </owl:NamedIndividual>
 </rdf:RDF>
 

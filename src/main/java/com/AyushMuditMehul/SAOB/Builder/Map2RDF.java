@@ -5,13 +5,17 @@
  */
 package com.AyushMuditMehul.SAOB.Builder;
 
+import com.AyushMuditMehul.SAOB.Main.MainWindow;
 import edu.stanford.nlp.ie.util.RelationTriple;
+import java.awt.Cursor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -53,27 +57,29 @@ public class Map2RDF extends javax.swing.JPanel {
      * 
      */
     File ontologyFile;
-    OWLOntologyManager manager;
+    OWLOntologyManager owlManager;
     OWLOntology ontology;
     PrefixManager prefixManager;
     RelationTriple triple;
     OWLLiteral mappedObjectLiteral;//to save mapped object owlLiteral if property mapped is a data property
     ArrayList<OWLAxiom> owlAxiomList;
+    MainWindow manager;
     boolean eventFlag=true;//true=event caused by user, false event caused by program.
-    public Map2RDF(RelationTriple triple) {
+    public Map2RDF(RelationTriple triple,MainWindow m) {
         initComponents();
-        this.triple=triple;
-        owlAxiomList=new ArrayList<OWLAxiom>();
-        ontologyFile = new File(".\\src\\main\\Resources\\tech.owl");
-        manager = OWLManager.createOWLOntologyManager();
-        prefixManager= new DefaultPrefixManager(null, null,
-            "http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#");
+        manager=m;
+        this.triple = triple;
+        owlAxiomList = null;
+        ontologyFile = new File(".\\src\\main\\Resources\\ontology.owl");
+        owlManager = OWLManager.createOWLOntologyManager();
         
         try {
-            ontology = manager.loadOntologyFromOntologyDocument(ontologyFile);
+            ontology = owlManager.loadOntologyFromOntologyDocument(ontologyFile);
         } catch (OWLOntologyCreationException ex) {
             Logger.getLogger(Map2RDF.class.getName()).log(Level.SEVERE, null, ex);
         }      
+        prefixManager= new DefaultPrefixManager(null, null,
+            ontology.getOntologyID().getOntologyIRI().get()+"#");
         subjectTextfield.setText(triple.subjectGloss());
         propertyTextfield.setText(triple.relationGloss());
         objectTextfield.setText(triple.objectGloss());
@@ -89,6 +95,7 @@ public class Map2RDF extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        ratingRadioButtonGroup = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         finalTripleTextArea = new javax.swing.JTextArea();
         addToOntologyButton = new javax.swing.JButton();
@@ -112,12 +119,25 @@ public class Map2RDF extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         createTripleButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        radioButton5 = new javax.swing.JRadioButton();
+        radioButton4 = new javax.swing.JRadioButton();
+        radioButton3 = new javax.swing.JRadioButton();
+        radioButton2 = new javax.swing.JRadioButton();
+        radioButton1 = new javax.swing.JRadioButton();
+        radioButton0 = new javax.swing.JRadioButton();
 
         finalTripleTextArea.setColumns(20);
         finalTripleTextArea.setRows(5);
         jScrollPane1.setViewportView(finalTripleTextArea);
 
         addToOntologyButton.setText("Add to Ontology");
+        addToOntologyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addToOntologyButtonActionPerformed(evt);
+            }
+        });
 
         propertyComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,11 +202,11 @@ public class Map2RDF extends javax.swing.JPanel {
                     .addComponent(subjectComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(subjectMainLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(subjectComboBox1, 0, 192, Short.MAX_VALUE))
-                .addGap(113, 113, 113)
+                .addGap(193, 193, 193)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(propertyComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
                     .addComponent(propertyComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(propertyComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(objectComboBox2, 0, 200, Short.MAX_VALUE)
@@ -196,39 +216,41 @@ public class Map2RDF extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(subjectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(105, 105, 105)
                 .addComponent(propertyTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                 .addComponent(objectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addGap(53, 53, 53))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(168, 168, 168)
                 .addComponent(jLabel1)
-                .addGap(287, 287, 287)
-                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(362, 362, 362)
                 .addComponent(jLabel3)
-                .addGap(189, 189, 189))
+                .addGap(197, 197, 197))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(subjectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(propertyTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(objectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(objectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(subjectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(subjectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(propertyTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(objectTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(objectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(subjectMainLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -243,47 +265,114 @@ public class Map2RDF extends javax.swing.JPanel {
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("Final RDF Triple");
+        jLabel4.setText("Final RDF Triple(s)");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Map2RDF");
 
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
-        createTripleButton.setText("Create Triple");
+        createTripleButton.setText("Create Triple(s)");
         createTripleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createTripleButtonActionPerformed(evt);
             }
         });
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel7.setText("Give Ratings for system suggestions:");
+
+        ratingRadioButtonGroup.add(radioButton5);
+        radioButton5.setText("5");
+
+        ratingRadioButtonGroup.add(radioButton4);
+        radioButton4.setText("4");
+
+        ratingRadioButtonGroup.add(radioButton3);
+        radioButton3.setText("3");
+
+        ratingRadioButtonGroup.add(radioButton2);
+        radioButton2.setText("2");
+
+        ratingRadioButtonGroup.add(radioButton1);
+        radioButton1.setText("1");
+
+        ratingRadioButtonGroup.add(radioButton0);
+        radioButton0.setText("0");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(radioButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(radioButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(radioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(radioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(radioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(radioButton0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(331, 331, 331))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(205, 205, 205))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(radioButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(radioButton0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(11, 11, 11))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(541, 541, 541))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(174, 174, 174)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 764, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addToOntologyButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cancelButton))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(172, 172, 172))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(124, 124, 124)
-                        .addComponent(addToOntologyButton)
-                        .addGap(30, 30, 30)
-                        .addComponent(cancelButton))
+                        .addGap(622, 622, 622)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(74, 74, 74)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(529, 529, 529)
-                        .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(87, Short.MAX_VALUE))
+                        .addGap(85, 85, 85)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,19 +382,20 @@ public class Map2RDF extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(54, 54, 54))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(createTripleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(addToOntologyButton)
-                            .addComponent(cancelButton))
-                        .addGap(95, 95, 95))))
+                            .addComponent(cancelButton))))
+                .addGap(91, 91, 91))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -354,13 +444,13 @@ public class Map2RDF extends javax.swing.JPanel {
 
                 IRI domainIRI = null;
                 if (propertyComboBox1.getSelectedItem().toString().contains("Object Property")) {
-                    property = manager.getOWLDataFactory().getOWLObjectProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
+                    property = owlManager.getOWLDataFactory().getOWLObjectProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
                     IRI rangeIRI;//get it from property
                     OWLObjectPropertyDomainAxiom domainAxiom = (OWLObjectPropertyDomainAxiom) ontology.getObjectPropertyDomainAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as domain of any property
                     OWLObjectPropertyRangeAxiom rangeAxiom = (OWLObjectPropertyRangeAxiom) ontology.getObjectPropertyRangeAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as range of any property
                     domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
                     rangeIRI = rangeAxiom.getRange().asOWLClass().getIRI();
-                    OWLNamedIndividual objectResource = IndividualMapper(triple.objectGloss(), rangeIRI);
+                    OWLNamedIndividual objectResource = individualMapper(triple.objectGloss(), rangeIRI);
                     //set object main label and load and set combo boxes
                     objectMainLabel.setText("class:" + rangeIRI.getShortForm());
                     loadObjectComboBox1();
@@ -373,16 +463,16 @@ public class Map2RDF extends javax.swing.JPanel {
                         setObjectComboBox1("New Resource");
                     }
                 } else if (propertyComboBox1.getSelectedItem().toString().contains("Data Property")) {
-                    property = manager.getOWLDataFactory().getOWLDataProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
+                    property = owlManager.getOWLDataFactory().getOWLDataProperty(":" + propertyComboBox2.getSelectedItem().toString(), prefixManager);
                     OWLDataPropertyDomainAxiom domainAxiom = (OWLDataPropertyDomainAxiom) ontology.getDataPropertyDomainAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as domain of any property
                     OWLDataPropertyRangeAxiom rangeAxiom = (OWLDataPropertyRangeAxiom) ontology.getDataPropertyRangeAxioms((OWLDataProperty) property).toArray()[0];//currently assuming only one class as range of any property
                     domainIRI = domainAxiom.getDomain().asOWLClass().getIRI();
                     OWLDatatype rangeDataType = rangeAxiom.getRange().asOWLDatatype();
                     //set object main label 
                     objectMainLabel.setText("Literal:" + rangeDataType.getIRI().getShortForm());
-                    mappedObjectLiteral =manager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
+                    mappedObjectLiteral =owlManager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
                 }
-                OWLNamedIndividual subjectResource = IndividualMapper(triple.subjectGloss(), domainIRI);
+                OWLNamedIndividual subjectResource = individualMapper(triple.subjectGloss(), domainIRI);
                 subjectMainLabel.setText("class:" + domainIRI.getShortForm());
                 loadSubjectComboBox1();
                 if (subjectResource != null)//i.e. mapped to some existing resource
@@ -426,21 +516,23 @@ public class Map2RDF extends javax.swing.JPanel {
 
     private void createTripleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createTripleButtonActionPerformed
         // TODO add your handling code here:
+        owlAxiomList=new ArrayList<OWLAxiom>();
         finalTripleTextArea.setText("");
         //Subject related
         OWLNamedIndividual subjectIndividual = null;
-        OWLDataFactory df=manager.getOWLDataFactory();
-        String tripleString;//using it again and again to display triple in textarea
+        OWLDataFactory df=owlManager.getOWLDataFactory();
+        //String tripleString;//using it again and again to display triple in textarea
         if(subjectComboBox1.getSelectedItem().toString().contains("Existing Resource")&&subjectComboBox2.getSelectedIndex()>0)
         {
          String selectedIndividual=subjectComboBox2.getSelectedItem().toString();
-         subjectIndividual= manager.getOWLDataFactory().getOWLNamedIndividual(":"+selectedIndividual.substring(0,selectedIndividual.indexOf("(") ), prefixManager);
+         subjectIndividual= owlManager.getOWLDataFactory().getOWLNamedIndividual(":"+selectedIndividual.substring(0,selectedIndividual.indexOf("(") ), prefixManager);
          OWLAnnotationProperty labelProperty = df.getRDFSLabel();
          OWLLiteral label=df.getOWLLiteral(triple.subjectGloss());
          OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty,subjectIndividual.getIRI() , label);
          owlAxiomList.add(labelAxiom);
-         tripleString=subjectIndividual.getIRI().getShortForm()+" "+labelProperty.getIRI().getShortForm()+" "+triple.subjectGloss()+"\n";
-         finalTripleTextArea.append(tripleString);
+         //tripleString=subjectIndividual.getIRI().getShortForm()+" "+labelProperty.getIRI().getShortForm()+" "+triple.subjectGloss()+"\n";
+         //finalTripleTextArea.append(tripleString);         
+         finalTripleTextArea.append(labelAxiom.toString()+"\n");
         }
         else if(subjectComboBox1.getSelectedItem().toString().contains("New Resource"))
         {                  
@@ -456,12 +548,18 @@ public class Map2RDF extends javax.swing.JPanel {
             OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, subjectIndividual.getIRI(), label);
             owlAxiomList.add(typeOfAxiom);
             owlAxiomList.add(labelAxiom);
-            tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.subjectGloss() + "\n";
-            finalTripleTextArea.append(tripleString);
+            //tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.subjectGloss() + "\n";
+            //finalTripleTextArea.append(tripleString);
+            finalTripleTextArea.append(typeOfAxiom.toString()+"\n");
+            finalTripleTextArea.append(labelAxiom.toString()+"\n");//for testing
         }
         else
         {
             //error display mapping incomplete
+            JOptionPane.showMessageDialog(new JFrame(),"Subject Mapping Incomplete!", "Incomplete Mapping", JOptionPane.ERROR_MESSAGE);
+            finalTripleTextArea.setText("");
+            owlAxiomList=null;
+            return;
         }
         
         //property related
@@ -471,17 +569,18 @@ public class Map2RDF extends javax.swing.JPanel {
             OWLNamedIndividual objectIndividual = null;
             if (objectComboBox1.getSelectedItem().toString().contains("Existing Resource") && objectComboBox2.getSelectedIndex() > 0) {
                 String selectedIndividual = objectComboBox2.getSelectedItem().toString();
-                objectIndividual = manager.getOWLDataFactory().getOWLNamedIndividual(":" + selectedIndividual.substring(0, selectedIndividual.indexOf("(")), prefixManager);
+                objectIndividual = owlManager.getOWLDataFactory().getOWLNamedIndividual(":" + selectedIndividual.substring(0, selectedIndividual.indexOf("(")), prefixManager);
                 OWLAnnotationProperty labelProperty = df.getRDFSLabel();
                 OWLLiteral label = df.getOWLLiteral(triple.objectGloss());
                 OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, objectIndividual.getIRI(), label);
                 owlAxiomList.add(labelAxiom);
-                tripleString = objectIndividual.getIRI().getShortForm() + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
-                finalTripleTextArea.append(tripleString);
+                //tripleString = objectIndividual.getIRI().getShortForm() + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
+                //finalTripleTextArea.append(tripleString);
+                finalTripleTextArea.append(labelAxiom.toString()+"\n");
             } else if (objectComboBox1.getSelectedItem().toString().contains("New Resource")) {
                 OWLAnnotationProperty labelProperty = df.getRDFSLabel();
                 String className = objectMainLabel.getText();
-                className = className.substring(className.indexOf(":" + 1));
+                className = className.substring(className.indexOf(":") + 1);
                 OWLClass owlClass = df.getOWLClass(":" + className, prefixManager); //pass class iri in this
                 String individualName = triple.objectGloss();
                 OWLLiteral label = df.getOWLLiteral(individualName);//label contains original name
@@ -491,30 +590,87 @@ public class Map2RDF extends javax.swing.JPanel {
                 OWLAxiom labelAxiom = df.getOWLAnnotationAssertionAxiom(labelProperty, objectIndividual.getIRI(), label);
                 owlAxiomList.add(typeOfAxiom);
                 owlAxiomList.add(labelAxiom);
-                tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
-                finalTripleTextArea.append(tripleString);
+                //tripleString = individualName + " " + "type " + className + "\n" + individualName + " " + labelProperty.getIRI().getShortForm() + " " + triple.objectGloss() + "\n";
+                //finalTripleTextArea.append(tripleString);
+                finalTripleTextArea.append(typeOfAxiom.toString()+"\n");
+                finalTripleTextArea.append(labelAxiom.toString()+"\n");
             } else {
                 //error display mapping incomplete
+                JOptionPane.showMessageDialog(new JFrame(), "Object Mapping Incomplete!", "Incomplete Mapping", JOptionPane.ERROR_MESSAGE);
+                finalTripleTextArea.setText("");
+                owlAxiomList = null;
+                return;
             }
             OWLObjectProperty property= df.getOWLObjectProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+            //inserting property mapping rule in rule file
+            PredicateRulesManager prm=new PredicateRulesManager();
+            prm.ruleInsertion(propertyTextfield.getText(), property.getIRI().toString());
             OWLAxiom objectPropertyAxiom =  df.getOWLObjectPropertyAssertionAxiom((OWLObjectPropertyExpression)property, subjectIndividual, objectIndividual);
             owlAxiomList.add(objectPropertyAxiom);
-            tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+objectIndividual.getIRI().getShortForm()+"\n";
-            finalTripleTextArea.append(tripleString);
+            //tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+objectIndividual.getIRI().getShortForm()+"\n";
+            //finalTripleTextArea.append(tripleString);
+            finalTripleTextArea.append(objectPropertyAxiom.toString()+"\n");
         }
         else if(propertyComboBox1.getSelectedItem().toString().contains("Data Property")&&propertyComboBox2.getSelectedIndex()>0)
         {
             OWLDataProperty property= df.getOWLDataProperty(":"+propertyComboBox2.getSelectedItem().toString(), prefixManager);
+            //inserting property mapping rule in rule file
+            PredicateRulesManager prm=new PredicateRulesManager();
+            prm.ruleInsertion(propertyTextfield.getText(), property.getIRI().toString());
             OWLAxiom dataPropertyAxiom =  df.getOWLDataPropertyAssertionAxiom((OWLDataPropertyExpression)property, subjectIndividual,mappedObjectLiteral);
             owlAxiomList.add(dataPropertyAxiom);
-            tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+mappedObjectLiteral.getLiteral();
-            finalTripleTextArea.append(tripleString);
+            //tripleString=subjectIndividual.getIRI().getShortForm()+" "+property.getIRI().getShortForm()+" "+mappedObjectLiteral.getLiteral();
+            //finalTripleTextArea.append(tripleString);
+            finalTripleTextArea.append(dataPropertyAxiom.toString()+"\n");
         }
         else
         {
             //error display mapping incomplete
+            JOptionPane.showMessageDialog(new JFrame(),"Property Mapping Incomplete!", "Incomplete Mapping", JOptionPane.ERROR_MESSAGE);
+            finalTripleTextArea.setText("");
+            owlAxiomList=null;
+            return;
         }
     }//GEN-LAST:event_createTripleButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+        manager.showAnalyserScreen();
+        manager.deleteMapperScreen();
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void addToOntologyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToOntologyButtonActionPerformed
+        // TODO add your handling code here:
+        manager.builderSessionRatings[0]++;
+        if(radioButton0.isSelected())
+        {
+            manager.builderSessionRatings[1]++;
+        }
+        else if(radioButton1.isSelected())
+        {
+            manager.builderSessionRatings[2]++;
+        }
+        else if(radioButton2.isSelected())
+        {
+            manager.builderSessionRatings[3]++;
+        }
+        else if(radioButton3.isSelected())
+        {
+            manager.builderSessionRatings[4]++;
+        }
+        else if(radioButton4.isSelected())
+        {
+            manager.builderSessionRatings[5]++;
+        }
+        else if(radioButton5.isSelected())
+        {
+            manager.builderSessionRatings[6]++;
+        }        
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        manager.createValidatorScreen(owlAxiomList);
+        manager.showValidatorScreen();        
+        setCursor(Cursor.getDefaultCursor());
+    }//GEN-LAST:event_addToOntologyButtonActionPerformed
 
     void loadSubjectComboBox1()
     {
@@ -714,7 +870,7 @@ public class Map2RDF extends javax.swing.JPanel {
                 OWLDatatype rangeDataType=rangeAxiom.getRange().asOWLDatatype();               
                 //set object main label 
                 objectMainLabel.setText("Literal:"+rangeDataType.getIRI().getShortForm());
-                mappedObjectLiteral =  manager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
+                mappedObjectLiteral =  owlManager.getOWLDataFactory().getOWLLiteral(triple.objectGloss(), OWL2Datatype.getDatatype(rangeDataType.getIRI()));
             }
             else//otherwise it is object property
             {
@@ -724,7 +880,7 @@ public class Map2RDF extends javax.swing.JPanel {
                 OWLObjectPropertyRangeAxiom rangeAxiom= (OWLObjectPropertyRangeAxiom) ontology.getObjectPropertyRangeAxioms((OWLObjectProperty) property).toArray()[0];//currently assuming only one class as range of any property
                 domainIRI=domainAxiom.getDomain().asOWLClass().getIRI();
                 rangeIRI=rangeAxiom.getRange().asOWLClass().getIRI();
-                OWLNamedIndividual objectResource=IndividualMapper(triple.objectGloss(),rangeIRI);
+                OWLNamedIndividual objectResource=individualMapper(triple.objectGloss(),rangeIRI);
                 //set object main label and load and set combo boxes
                 objectMainLabel.setText("class:"+rangeIRI.getShortForm());
                 loadObjectComboBox1();
@@ -738,7 +894,7 @@ public class Map2RDF extends javax.swing.JPanel {
                 }
                 
             }
-            OWLNamedIndividual subjectResource=IndividualMapper(triple.subjectGloss(),domainIRI);
+            OWLNamedIndividual subjectResource=individualMapper(triple.subjectGloss(),domainIRI);
             subjectMainLabel.setText("class:"+domainIRI.getShortForm());
             loadSubjectComboBox1();
             if(subjectResource!=null)//i.e. mapped to some existing resource
@@ -767,7 +923,7 @@ public class Map2RDF extends javax.swing.JPanel {
         PredicateRulesManager prm= new PredicateRulesManager();        
         String propertyIRI=prm.ruleSearch(propertyText);
         if(propertyIRI==null||propertyIRI.isEmpty())
-        {
+        {            
             return null;
         }
         else
@@ -775,11 +931,11 @@ public class Map2RDF extends javax.swing.JPanel {
             OWLDataProperty dataProperty;
             OWLObjectProperty objectProperty;
             if(ontology.containsDataPropertyInSignature(IRI.create(propertyIRI))) //this function returns boolean
-            {   dataProperty = manager.getOWLDataFactory().getOWLDataProperty(IRI.create(propertyIRI));                
+            {   dataProperty = owlManager.getOWLDataFactory().getOWLDataProperty(IRI.create(propertyIRI));                
                 return dataProperty;
             }
             else if(ontology.containsObjectPropertyInSignature(IRI.create(propertyIRI)))
-            {  objectProperty = manager.getOWLDataFactory().getOWLObjectProperty(IRI.create(propertyIRI));                
+            {  objectProperty = owlManager.getOWLDataFactory().getOWLObjectProperty(IRI.create(propertyIRI));                
                 return objectProperty;
             }
             else
@@ -787,12 +943,12 @@ public class Map2RDF extends javax.swing.JPanel {
         }
           
     }
-    OWLNamedIndividual IndividualMapper(String text,IRI classIRI)
+    OWLNamedIndividual individualMapper(String text,IRI classIRI)
     {        
          //currently not using classIRI, possible optimisation: there are higher chances that text represents an individual of class represented by class IRI
         Collection<OWLAnnotation> labelList;          
         String label;
-         OWLAnnotationProperty labelProperty = manager.getOWLDataFactory().getRDFSLabel();            
+         OWLAnnotationProperty labelProperty = owlManager.getOWLDataFactory().getRDFSLabel();            
             Set<OWLNamedIndividual> individual = ontology.getIndividualsInSignature();
             for(OWLNamedIndividual i : individual)
             {                   
@@ -821,7 +977,9 @@ public class Map2RDF extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> objectComboBox1;
     private javax.swing.JComboBox<String> objectComboBox2;
@@ -830,6 +988,13 @@ public class Map2RDF extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> propertyComboBox1;
     private javax.swing.JComboBox<String> propertyComboBox2;
     private javax.swing.JTextField propertyTextfield;
+    private javax.swing.JRadioButton radioButton0;
+    private javax.swing.JRadioButton radioButton1;
+    private javax.swing.JRadioButton radioButton2;
+    private javax.swing.JRadioButton radioButton3;
+    private javax.swing.JRadioButton radioButton4;
+    private javax.swing.JRadioButton radioButton5;
+    private javax.swing.ButtonGroup ratingRadioButtonGroup;
     private javax.swing.JComboBox<String> subjectComboBox1;
     private javax.swing.JComboBox<String> subjectComboBox2;
     private javax.swing.JLabel subjectMainLabel;

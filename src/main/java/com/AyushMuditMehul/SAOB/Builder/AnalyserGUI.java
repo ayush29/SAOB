@@ -6,6 +6,7 @@
 package com.AyushMuditMehul.SAOB.Builder;
 
 import com.AyushMuditMehul.SAOB.Main.MainWindow;
+import com.AyushMuditMehul.SAOB.Stats.PerformanceCSVFileManager;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.*;
@@ -55,6 +56,7 @@ public class AnalyserGUI extends javax.swing.JPanel {
         analysedSentenceView = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         tripleTable = new javax.swing.JTable();
+        cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
@@ -113,6 +115,13 @@ public class AnalyserGUI extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(tripleTable);
 
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -126,7 +135,9 @@ public class AnalyserGUI extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addGap(52, 52, 52)
-                        .addComponent(mapButton)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(mapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(68, 68, 68))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -139,8 +150,11 @@ public class AnalyserGUI extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
-                        .addComponent(mapButton)))
+                        .addGap(51, 51, 51)
+                        .addComponent(mapButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(cancelButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(45, 45, 45))
         );
 
@@ -338,12 +352,28 @@ public class AnalyserGUI extends javax.swing.JPanel {
         }*/
         
         //pass triple object to Map2RDF
-        manager.temporaryMethod(triple);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        manager.createMapperScreen(triple);
+        manager.showMapperScreen();    
+        setCursor(Cursor.getDefaultCursor());
     }//GEN-LAST:event_mapButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+       if(manager.builderSessionRatings!=null)
+       {
+           PerformanceCSVFileManager performanceFileManager = new PerformanceCSVFileManager();
+           performanceFileManager.insertRecord(manager.builderSessionRatings[0], manager.builderSessionRatings[1], manager.builderSessionRatings[2], manager.builderSessionRatings[3], manager.builderSessionRatings[4], manager.builderSessionRatings[5], manager.builderSessionRatings[6]);
+           manager.builderSessionRatings = null;
+       }
+        manager.showHomeScreen();
+        manager.deleteAnalyserScreen();
+    }//GEN-LAST:event_cancelButtonActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea analysedSentenceView;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel headingLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
