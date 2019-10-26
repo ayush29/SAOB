@@ -1,0 +1,363 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#"
+     xml:base="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#basedon -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#basedon">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#belongsto -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#belongsto">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#has"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#conceptof -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#conceptof">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#creator -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#creator">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">creator</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#dependent -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#dependent">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#independent"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#has -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#has">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#hasmember -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#hasmember">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#memberof"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#independent -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#independent">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#introducedby -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#introducedby">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#memberof -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#memberof">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#ownedby -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#ownedby">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#owner"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#owner -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#owner">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#subfield -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#subfield">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#versionof -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#versionof">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#acronym -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#acronym">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#developedin -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#developedin">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#first_name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#first_name">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#fullform -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#fullform">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#intoducedin -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#intoducedin">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#isResearchTopic -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#isResearchTopic">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#last_name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#last_name">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#name -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#name">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#version -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#version">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology">
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">Technology</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#concept">
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">Concept</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field">
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">Field</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#organization">
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">Organization</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#person">
+        <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal">Person</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:label>Computer Science</rdfs:label>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">computer science</rdfs:label>
+        <rdfs:label>testing</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">networking</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wifi -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wifi">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <dependent rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless"/>
+        <subfield rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Computer_Science"/>
+        <subfield rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking"/>
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wifi</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#wireless">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Technology"/>
+        <dependent rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#networking"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Science_&amp;_Technology -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#Science_&amp;_Technology">
+        <rdf:type rdf:resource="http://www.semanticweb.org/mudit/ontologies/2017/1/techontology#field"/>
+        <rdfs:label>Science and Technology</rdfs:label>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.6.20160910-2108) https://github.com/owlcs/owlapi -->
+

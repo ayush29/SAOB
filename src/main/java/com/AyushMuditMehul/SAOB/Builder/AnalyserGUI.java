@@ -5,9 +5,13 @@
  */
 package com.AyushMuditMehul.SAOB.Builder;
 
+import com.AyushMuditMehul.SAOB.Main.MainWindow;
+import com.AyushMuditMehul.SAOB.Stats.PerformanceCSVFileManager;
 import edu.stanford.nlp.ie.util.RelationTriple;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.simple.*;
+import edu.stanford.nlp.util.Pair;
+import java.awt.Cursor;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
@@ -23,9 +27,13 @@ public class AnalyserGUI extends javax.swing.JPanel {
      */
     Document doc;
     List<Sentence> sentenceList;
+    Sentence currentSent;
+    Collection<RelationTriple> currentTripleList;
     int iterator=-1;
-    public AnalyserGUI() {
+    MainWindow manager;
+    public AnalyserGUI(MainWindow m) {
         initComponents();
+        manager=m;
     }
 
     /**
@@ -45,9 +53,10 @@ public class AnalyserGUI extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         mapButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        analysedSentence = new javax.swing.JTextArea();
+        analysedSentenceView = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         tripleTable = new javax.swing.JTable();
+        cancelButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
@@ -57,8 +66,15 @@ public class AnalyserGUI extends javax.swing.JPanel {
         jScrollPane1.setViewportView(textArea);
 
         prevButton.setText("Analyse Prev. Sentence");
+        prevButton.setEnabled(false);
+        prevButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prevButtonActionPerformed(evt);
+            }
+        });
 
         nextButton.setText("Analyse Next Sentence");
+        nextButton.setEnabled(false);
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButtonActionPerformed(evt);
@@ -70,11 +86,16 @@ public class AnalyserGUI extends javax.swing.JPanel {
         headingLabel.setText("ANALYSER");
 
         mapButton.setText("Map to RDF Triple");
+        mapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mapButtonActionPerformed(evt);
+            }
+        });
 
-        analysedSentence.setEditable(false);
-        analysedSentence.setColumns(20);
-        analysedSentence.setRows(5);
-        jScrollPane2.setViewportView(analysedSentence);
+        analysedSentenceView.setEditable(false);
+        analysedSentenceView.setColumns(20);
+        analysedSentenceView.setRows(5);
+        jScrollPane2.setViewportView(analysedSentenceView);
 
         tripleTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -94,6 +115,13 @@ public class AnalyserGUI extends javax.swing.JPanel {
         });
         jScrollPane3.setViewportView(tripleTable);
 
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -107,7 +135,9 @@ public class AnalyserGUI extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addGap(52, 52, 52)
-                        .addComponent(mapButton)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(mapButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(68, 68, 68))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -120,8 +150,11 @@ public class AnalyserGUI extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
-                        .addComponent(mapButton)))
+                        .addGap(51, 51, 51)
+                        .addComponent(mapButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(cancelButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(45, 45, 45))
         );
 
@@ -196,41 +229,64 @@ public class AnalyserGUI extends javax.swing.JPanel {
         // TODO add your handling code here:
         
         iterator++;
-        if(iterator<sentenceList.size())
+        if(iterator<sentenceList.size()&&iterator>=0)
         {
-            Sentence sent=sentenceList.get(iterator);
-            analysedSentence.setText(sent.text());
-            Collection<RelationTriple> tripleList=sent.openieTriples();
+            currentSent=sentenceList.get(iterator);
+            analysedSentenceView.setText(currentSent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
+            currentTripleList=currentSent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
             model.setRowCount(0);
-            for(RelationTriple triple:tripleList)
+            for(RelationTriple triple:currentTripleList)
             {
-                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
                 model.addRow(rowData);
             }
+        }        
+        
+        if(iterator==sentenceList.size()-1)
+        {
+            nextButton.setEnabled(false);
         }
+        if(iterator>0)
+        {
+            prevButton.setEnabled(true);
+        }
+        
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         // TODO add your handling code here:
-        textArea.setEditable(false);
-        stopButton.setEnabled(true);
-        startButton.setEnabled(false);
-        nextButton.setEnabled(true);
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
         doc=new Document(textArea.getText());
         sentenceList= doc.sentences();
+        setCursor(Cursor.getDefaultCursor());
         if(sentenceList.size()!=0)
         {
+            textArea.setEditable(false);
+            stopButton.setEnabled(true);
+            startButton.setEnabled(false);
+            if(sentenceList.size()>1)
+             nextButton.setEnabled(true);
             iterator=0;
-            Sentence sent=sentenceList.get(iterator);
-            analysedSentence.setText(sent.text());
-            Collection<RelationTriple> tripleList=sent.openieTriples();
+            currentSent=sentenceList.get(iterator);           
+            analysedSentenceView.setText(currentSent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));   
+            currentTripleList=currentSent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
             DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
-            for(RelationTriple triple:tripleList)
+            for(RelationTriple triple:currentTripleList)
             {
-                Object rowData[]={triple.subjectLemmaGloss(),triple.relationLemmaGloss(),triple.objectLemmaGloss()};
-                model.addRow(rowData);
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
+                model.addRow(rowData);                
+                //triple.subject.get(0)
             }
+        }
+        else
+        {
+            doc=null;
+            sentenceList=null;
         }
         //start analysing
     }//GEN-LAST:event_startButtonActionPerformed
@@ -241,16 +297,83 @@ public class AnalyserGUI extends javax.swing.JPanel {
         startButton.setEnabled(true);
         stopButton.setEnabled(false);   
         nextButton.setEnabled(false);
+        prevButton.setEnabled(false);
         doc=null;
         sentenceList=null;
         iterator=-1;
         ((DefaultTableModel)tripleTable.getModel()).setRowCount(0);
-        analysedSentence.setText("");        
+        analysedSentenceView.setText("");        
     }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
+        // TODO add your handling code here:
+        iterator--;
+        if(iterator<sentenceList.size()&&iterator>=0)
+        {
+            currentSent=sentenceList.get(iterator);
+            analysedSentenceView.setText(currentSent.text());
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));       
+            currentTripleList=currentSent.openieTriples();
+            setCursor(Cursor.getDefaultCursor());
+            DefaultTableModel model=(DefaultTableModel) tripleTable.getModel();
+            model.setRowCount(0);
+            for(RelationTriple triple:currentTripleList)
+            {
+                Object rowData[]={triple.subjectGloss(),triple.relationGloss(),triple.objectGloss()};
+                model.addRow(rowData);
+            }
+        }
+        if(iterator==0)
+        {
+            prevButton.setEnabled(false);
+        }
+        if(iterator!=sentenceList.size()-1)
+        {
+            nextButton.setEnabled(true);
+        }
+    }//GEN-LAST:event_prevButtonActionPerformed
+
+    private void mapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mapButtonActionPerformed
+        // TODO add your handling code here:
+        System.gc();
+        //List<String> nerTags=currentSent.nerTags();
+        RelationTriple triple=(RelationTriple) currentTripleList.toArray()[tripleTable.getSelectedRow()];
+        /*Pair<Integer,Integer> s=triple.subjectTokenSpan();  //ner tagging
+        for(int i=s.first;i<s.second;i++)
+        {
+        triple.subject.get(i).setNER(nerTags.get(i));
+        System.out.println(triple.subject.get(i).originalText()+":"+triple.subject.get(i).ner());
+        }
+        s=triple.objectTokenSpan();
+        for(int i=s.first;i<s.second;i++)
+        {
+        triple.object.get(i-s.first).setNER(nerTags.get(i));
+        System.out.println(triple.object.get(i-s.first).originalText()+":"+triple.object.get(i-s.first).ner());
+        }*/
+        
+        //pass triple object to Map2RDF
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        manager.createMapperScreen(triple);
+        manager.showMapperScreen();    
+        setCursor(Cursor.getDefaultCursor());
+    }//GEN-LAST:event_mapButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO add your handling code here:
+       if(manager.builderSessionRatings!=null)
+       {
+           PerformanceCSVFileManager performanceFileManager = new PerformanceCSVFileManager();
+           performanceFileManager.insertRecord(manager.builderSessionRatings[0], manager.builderSessionRatings[1], manager.builderSessionRatings[2], manager.builderSessionRatings[3], manager.builderSessionRatings[4], manager.builderSessionRatings[5], manager.builderSessionRatings[6]);
+           manager.builderSessionRatings = null;
+       }
+        manager.showHomeScreen();
+        manager.deleteAnalyserScreen();
+    }//GEN-LAST:event_cancelButtonActionPerformed
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea analysedSentence;
+    private javax.swing.JTextArea analysedSentenceView;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel headingLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
